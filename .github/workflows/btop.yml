@@ -1,0 +1,36 @@
+name: Weekly Build & Release btop (Static)
+
+on:
+  schedule:
+    - cron: '0 12 * * 0'
+  workflow_dispatch:
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up build directory
+        run: mkdir -p btop-build
+
+      - name: Build with Docker
+        run: |
+          docker run --rm -v "${{ github.workspace }}/btop-build":/build -w /build muslcc/x86_64:mipsel-linux-muslsf /bin/sh -c "\
+            apk add --no-cache coreutils git make tar zstd && \
+            git clone https://github.com/aristocratos/btop.git && \
+            cd btop && \
+            make STATIC=true STRIP=true"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: weekly-btop-${{ github.run_id }}
+          name: Weekly btop Build - ${{ github.run_id }}
+          body: |
+            Automated weekly static build of btop for `mipsel-linux-muslsf`.
+          files: btop-build/btop/bin/btop
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
