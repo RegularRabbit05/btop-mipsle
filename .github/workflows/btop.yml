@@ -26,7 +26,7 @@ jobs:
             COMMIT_URL=\"https://github.com/aristocratos/btop/commit/\$COMMIT_HASH\" && \
             echo \"BTOP_COMMIT_HASH=\$COMMIT_HASH\" >> /build/btop_commit_env && \
             echo \"BTOP_COMMIT_URL=\$COMMIT_URL\" >> /build/btop_commit_env && \
-            echo \"RELEASE_BODY=Automated weekly static build of btop for mipsel-linux-muslsf.%0A%0ABuilt from aristocratos/btop commit: \$COMMIT_URL\" >> /build/btop_commit_env && \
+            echo \"RELEASE_BODY=mipsel-linux-muslsf built from aristocratos/btop commit: \$COMMIT_URL\" >> /build/btop_commit_env && \
             make STATIC=true STRIP=true"
 
       - name: Read commit hash and URL
