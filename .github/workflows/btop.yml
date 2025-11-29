@@ -18,8 +18,8 @@ jobs:
 
       - name: Build with Docker and record btop commit
         run: |
-          docker run --rm -v "${{ github.workspace }}/btop-build":/build -w /build muslcc/x86_64:mipsel-linux-muslsf /bin/sh -c "\
-            apk add --no-cache coreutils git make tar zstd && \
+          docker run --rm -v "${{ github.workspace }}/btop-build":/build -w /build ghcr.io/rust-cross/rust-musl-cross:mipsel-musl /bin/sh -c "\
+            apt-get update && apt-get install -y git make tar zstd && \
             git clone https://github.com/aristocratos/btop.git && \
             cd btop && \
             COMMIT_HASH=\$(git rev-parse HEAD) && \
@@ -27,6 +27,7 @@ jobs:
             echo \"BTOP_COMMIT_HASH=\$COMMIT_HASH\" >> /build/btop_commit_env && \
             echo \"BTOP_COMMIT_URL=\$COMMIT_URL\" >> /build/btop_commit_env && \
             echo \"RELEASE_BODY=mipsel-linux-muslsf built from aristocratos/btop commit: \$COMMIT_URL\" >> /build/btop_commit_env && \
+            export CC=mipsel-linux-musl-gcc CXX=mipsel-linux-musl-g++ && \
             make STATIC=true STRIP=true"
 
       - name: Read commit hash and URL
